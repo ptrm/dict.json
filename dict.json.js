@@ -1,6 +1,6 @@
 /*
 	Dict.json, a dict protocol wrapper
-	Copyright (c) 2010 Piotrek Marciniak, MIT Style License
+	Copyright (c) 2010 Piotrek Marciniak <piotrek@ptrm.eu>, MIT Style License
 */
 
 var http = require('http');
