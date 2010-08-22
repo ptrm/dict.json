@@ -21,9 +21,9 @@ var logLevel = {
 }
 
 var config = {
-				  logging : logLevel.standard
+				  logging : logLevel.verbose
 				, server : {
-							  'port' : '8700'
+							  'port' : '8701'
 							, 'host' : '127.0.0.1'
 					}
 				, dictd : {
@@ -60,10 +60,10 @@ function handleRequest(req, res) {
 	var wordList = [];
 
 	if (params) {
-		if (params.mode == null)
-			params.mode = '';
+		if (params.action == null)
+			params.action = '';
 		
-		switch ( params.mode ) {
+		switch ( params.action ) {
 			case '':
 			case 'def':
 				wordList = [ {word: params.word, type: params.type} ];
@@ -272,13 +272,6 @@ function getDefs(words, res, options) {
 					//onEnd event should follow, so no need to do anything here
 				break;
 					
-				//invalid database, nothing more to do
-				case '550':
-					dict.destroy();
-					end(res, 'error', 'Invalid database.');
-					return;
-				break;
-				
 				//a couple of errors on which we should close
 				//temorarily unavailable
 				case '420':
@@ -309,6 +302,8 @@ function getDefs(words, res, options) {
 				case '501':
 				//command parameter not implemented
 				case '503':
+				//invalid database
+				case '550':
 				//invalid strategy
 				case '551':
 					log('Proceeding to next request at status ' + status, logLevel.diagnostic);
@@ -343,9 +338,7 @@ function getDefs(words, res, options) {
 					}
 						
 					if (textEnded) {
-						// ".." On the beggining of a new line means "."
-						// We also remove the "." ending the text message.
-						
+						// Remove the "." ending the text message.
 						sugLines = textBuf.replace(/\r\n\.(\r\n|$)/, '').split('\r\n');
 						
 						suggestions[word] = [];
@@ -430,7 +423,7 @@ function getDefs(words, res, options) {
 	});
 		
 	dict.on('close', function (ok) {
-		if (options.mode == 'def') {
+		if (options.action == 'def') {
 			defs = defs[word] || [];
 
 			if (options.suggestions)

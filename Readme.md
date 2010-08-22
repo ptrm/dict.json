@@ -37,7 +37,7 @@ The only supported method is GET, but it might change in the future.
 ### Single word requests ###
 
 #### Query string variables ####
-* `mode=def` – can be ommited
+* `action=def` – can be ommited
 * `suggestions=<true|false>`
 * `word=<word>`
 * `type=<adj|adv|v|n>` – Filtering only certain word types from the definition, currently unsupported.
@@ -68,9 +68,9 @@ The only supported method is GET, but it might change in the future.
 		
 ### Multiple words requests ###
 #### Query string variables ####
-* `mode=multi`
-* `words[0][word]=<word>`
-* `words[0][type]=<type>`
+* `action=multi`
+* `words[][word]=<word>`
+* `words[][type]=<type>`
 * `suggestions=<true|false>`
 		
 #### Response ####
