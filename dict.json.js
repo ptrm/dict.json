@@ -21,9 +21,9 @@ var logLevel = {
 }
 
 var config = {
-				  logging : logLevel.verbose
+				  logging : logLevel.diagnostic
 				, server : {
-							  'port' : '8701'
+							  'port' : '8700'
 							, 'host' : '127.0.0.1'
 					}
 				, dictd : {
@@ -55,7 +55,7 @@ function handleRequest(req, res) {
 	
 	res.writeHead(200, {'Content-Type': 'application/json'});
 	
-	var mode = '';
+	var action = '';
 	
 	var wordList = [];
 
@@ -67,16 +67,16 @@ function handleRequest(req, res) {
 			case '':
 			case 'def':
 				wordList = [ {word: params.word, type: params.type} ];
-				mode = 'def';
+				action = 'def';
 			break;
 			
 			case 'multi':
 				wordList = params.words;
-				mode = 'multi';
+				action = 'multi';
 			break;
 		
 			default:
-				end(res, 'error', 'Wrong mode given.');
+				end(res, 'error', 'Wrong action given.');
 				return;
 			break;
 		}
@@ -91,7 +91,7 @@ function handleRequest(req, res) {
 	if (words._count) {
 		log('Words ok', logLevel.verbose);
 		defs = getDefs(words, res, {
-									  mode: mode
+									  action: action
 									, suggestions: (params.suggestions == 'true')
 				});
 	}
@@ -115,6 +115,8 @@ function getDefs(words, res, options) {
 	var defs = {};
 	var suggestions = {};
 	var reqQueue = [];
+	var sentReqs = [];
+	var currentReqIdx = -1;
 	var currentReq = {};
 	
 	dict = net.createConnection(config.dictd.port, config.dictd.host );
@@ -162,18 +164,30 @@ function getDefs(words, res, options) {
 	function nextReq() {
 		reqOnDrain = false;
 
-		if ( reqQueue.length ) {
+		// check whether all responses arrived and if there are requests to be sent
+		if ( (currentReqIdx + 1 < sentReqs.length) || reqQueue.length ) {
 			if ( dict.writable == false ) {
 				reqOnDrain = true;
 				log('nextReq() postponed till drain', logLevel.diagnostic);
 				return;
 			}
 			
-			currentReq = reqQueue.shift();
+			
+			// Send the all ending requests at once. It increases performance when
+			// using remote dict server, and is encouraged by the RFC.
+			req = reqQueue.join('');
+			sentReqs = sentReqs.concat(reqQueue);
+			
+			reqQueue = [];
+
+			currentReqIdx++;
+			currentReq = sentReqs[currentReqIdx];
+
 			dict.write(currentReq.request);
 			
-			log('getDefs: nextReq: sent request: "' + currentReq.request + '"', logLevel.verbose);
+			log('getDefs: nextReq: sent request: "' + req + '"', logLevel.verbose);
 		}
+		// if not, send the quit message
 		else {
 			currentReq = {request: 'q\r\n'};
 			dict.end(currentReq.request);
