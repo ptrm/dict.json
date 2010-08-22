@@ -30,7 +30,7 @@ var config = {
 							 'port' : '2628'
 							, 'host' : '127.0.0.1'
 					}
-				, db : 'wn'
+				, db : '!'
 }
 
 start();
@@ -420,7 +420,7 @@ function getDefs(words, res, options) {
 						log('Definition ended.', logLevel.verbose);
 						log('Parsed defs: ' + sys.inspect(definition), logLevel.verbose);
 						
-						if (typeof defs[word] != 'array')
+						if (typeof defs[word] != 'object')
 							defs[word] = new Array();
 						
 						defs[word].push({
