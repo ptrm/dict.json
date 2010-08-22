@@ -93,6 +93,7 @@ function handleRequest(req, res) {
 		defs = getDefs(words, res, {
 									  action: action
 									, suggestions: (params.suggestions == 'true')
+									, sugIgnoreDb: (typeof params.sug_ignore_db == 'object' ? params.sug_ignore_db : [params.sug_ignore_db] )
 				});
 	}
 	else
@@ -157,6 +158,7 @@ function getDefs(words, res, options) {
 								  request: req
 								, word: word
 								, type: 'def'
+								, db: db
 				});
 			}
 			
@@ -303,10 +305,11 @@ function getDefs(words, res, options) {
 				//no match
 				case '552':
 					//provide suggestions?
-					//checking request type, because server gives the same not found code for suggestions as for words;
-					if ( (currentReq.type == 'def') && options.suggestions ) {
+					// checking request type, because server gives the same not found code for suggestions as for words
+					// also checking whether db isn't on ignore list
+					if ( (currentReq.type == 'def') && options.suggestions && ( options.sugIgnoreDb.indexOf(currentReq.db) < 0 ) ) {
 						reqQueue.push({
-										  request: 'match ' + config.db + ' lev "' + currentReq.word + '"' + '\r\n'
+										  request: 'match ' + currentReq.db + ' lev "' + currentReq.word + '"' + '\r\n'
 										, type: 'sug'
 										, word: currentReq.word
 									});
