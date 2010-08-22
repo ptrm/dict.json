@@ -66,7 +66,7 @@ function handleRequest(req, res) {
 		switch ( params.action ) {
 			case '':
 			case 'def':
-				wordList = [ {word: params.word, type: params.type} ];
+				wordList = [ {word: params.word, type: params.type, db: params.db} ];
 				action = 'def';
 			break;
 			
@@ -145,15 +145,20 @@ function getDefs(words, res, options) {
 			if (word == '_count')
 				continue;
 			
-			var req = 'd ' + config.db +' "' + word + '"' + "\r\n";
-			
+
 			defs[word] = [];
-			
-			reqQueue.push({
-							  request: req
-							, word: word
-							, type: 'def'
-						});
+
+			for (dbIdx in words[word].db) {
+				db = words[word].db[dbIdx];
+				
+				req = 'd ' + db +' "' + word + '"' + "\r\n";
+				
+				reqQueue.push({
+								  request: req
+								, word: word
+								, type: 'def'
+				});
+			}
 			
 			//reqQueue.push('d * "' + word + '"' + "\r\n");
 		}
@@ -185,7 +190,7 @@ function getDefs(words, res, options) {
 
 			dict.write(currentReq.request);
 			
-			log('getDefs: nextReq: sent request: "' + req + '"', logLevel.verbose);
+			log('getDefs: nextReq: sent request: "' + typeof req + '"', logLevel.verbose);
 		}
 		// if not, send the quit message
 		else {
@@ -464,10 +469,26 @@ function parseWords(words) {
 			continue;
 		
 		word = words[i].word.replace(/["\r\n]/g, '').trim().toLowerCase();
+		
+		var db = [];
+		if (words[i].db) {
+			if ( typeof words[i].db != 'object' )
+				words[i].db = new Array(words[i].db);
+
+			for (dbIdx in words[i].db) {
+				nDb = words[i].db[dbIdx];
+				db.push(nDb.replace(/["\r\n]/g, '').trim().toLowerCase());
+			}
+			
+		}
+
+		if (!db.length)
+			db.push(config.db);
+	
 		type = (words[i].type in wordTypes) ? words[i].type : '';
 		
 		if ( word ) {
-			res[word] = type;
+			res[word] = {type: type, db: db};
 			count++;
 		}
 	}
