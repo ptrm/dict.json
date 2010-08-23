@@ -23,7 +23,7 @@ var logLevel = {
 var config = {
 				  logging : logLevel.diagnostic
 				, server : {
-							  'port' : '8700'
+							  'port' : '8701'
 							, 'host' : '127.0.0.1'
 					}
 				, dictd : {
@@ -182,7 +182,11 @@ function getDefs(words, res, options) {
 			
 			// Send the all ending requests at once. It increases performance when
 			// using remote dict server, and is encouraged by the RFC.
-			req = reqQueue.join('');
+			req = '';
+			for (i in reqQueue) {
+				req = req + reqQueue[i].request;
+			}
+			
 			sentReqs = sentReqs.concat(reqQueue);
 			
 			reqQueue = [];
@@ -190,9 +194,10 @@ function getDefs(words, res, options) {
 			currentReqIdx++;
 			currentReq = sentReqs[currentReqIdx];
 
-			dict.write(currentReq.request);
-			
-			log('getDefs: nextReq: sent request: "' + typeof req + '"', logLevel.verbose);
+			if ( req.trim() ) {
+				dict.write(req);
+				log('getDefs: nextReq: sent request: "' + req + '"', logLevel.verbose);
+			}
 		}
 		// if not, send the quit message
 		else {
@@ -363,7 +368,8 @@ function getDefs(words, res, options) {
 						// Remove the "." ending the text message.
 						sugLines = textBuf.replace(/\r\n\.(\r\n|$)/, '').split('\r\n');
 						
-						suggestions[word] = [];
+						if (typeof suggestions[word] != 'object')
+							suggestions[word] = [];
 						
 						for (lNum in sugLines) {
 							if ( ! sugLines[lNum].trim() )
@@ -423,10 +429,10 @@ function getDefs(words, res, options) {
 						log('Definition ended.', logLevel.verbose);
 						log('Parsed defs: ' + sys.inspect(definition), logLevel.verbose);
 						
-						if (typeof defs[word] != 'object')
-							defs[word] = new Array();
+						if (typeof defs[currentReq.word] != 'object')
+							defs[currentReq.word] = [];
 						
-						defs[word].push({
+						defs[currentReq.word].push({
 											  def: definition
 											, db: {
 												  name:dbName
@@ -446,10 +452,10 @@ function getDefs(words, res, options) {
 		
 	dict.on('close', function (ok) {
 		if (options.action == 'def') {
-			defs = defs[word] || [];
+			defs = firstObj(defs) || [];
 
 			if (options.suggestions)
-				suggestions = suggestions[word] || [];
+				suggestions = firstObj(suggestions) || [];
 		}
 		
 		
@@ -501,6 +507,20 @@ function parseWords(words) {
 	log(sys.inspect(res), logLevel.verbose);
 	
 	return res;
+}
+
+function firstObj(list) {
+	var obj = null;
+	
+	if (typeof list != 'object')
+		return null;
+	
+	for (idx in list) {
+		obj = list[idx];
+		break;
+	}
+	
+	return obj;
 }
 
 function log(msg, level) {
