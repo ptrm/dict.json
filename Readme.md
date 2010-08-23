@@ -1,9 +1,9 @@
-# Dict.json – a dict protocol wrapper for node.js
+# Dict.json – a dict protocol wrapper for [node.js](http://nodejs.org/)
 
 ## Description ##
 
 Dict.json is a simple wrapper which requests definitions of given words from the dict server, and returns them in JSON format.
-It tries hard to be RFC–compliant (http://www.dict.org/rfc2229.txt), though it can't be guaranteed.
+It tries hard to be [RFC](http://www.dict.org/rfc2229.txt)–compliant, though it can't be guaranteed.
 
 Dict.json is distributed under a MIT-Style License.
 
@@ -12,19 +12,19 @@ Dict.json is distributed under a MIT-Style License.
 * providing suggestions if the definition wasn't found
 
 ### Limitations (likely to be fixed soon) ###
-* lack of support for listing databases and strategies
+* lack of support for custom match command (used only for suggestions), listing databases and strategies
 * Levenshtein distance one strategy hardcoded for suggestions
 
 
 ## Usage ##
 
-You should have node.js installed.
+You should have [node.js](http://nodejs.org/) installed.
 
 To run dict.json type `node dict.json.js`
 
 The server should be up and listening on 127.0.0.1:8700.
-The program settings are stored in the config variable on the beginning of the dict.json.js file.
-Best result are achieved when dict server is also run on localhost.
+The settings are stored in the `config` variable on the beginning of the `dict.json.js` file.
+Best results are achieved when dict server is also run on localhost, otherwise you might want to change `config.dictd.timeout` to a larger value.
 
 
 ## Data structure ##

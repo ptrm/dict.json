@@ -29,6 +29,7 @@ var config = {
 				, dictd : {
 							 'port' : '2628'
 							, 'host' : '127.0.0.1'
+							, 'timeout' : 100
 					}
 				, db : '!'
 }
@@ -122,7 +123,7 @@ function getDefs(words, res, options) {
 	
 	dict = net.createConnection(config.dictd.port, config.dictd.host );
 	
-	dict.setTimeout(100);
+	dict.setTimeout(config.dictd.timeout);
 	dict.setEncoding('utf8');
 	
 	if ( typeof options != 'object' )
