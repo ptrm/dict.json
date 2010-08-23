@@ -62,7 +62,8 @@ The only supported method is GET, but it might change in the future.
 			<suggested word 2>
 		],
 		
-		"status": <ok - also when no definitions found|error>
+		"status": <ok - also when no definitions found|error>,
+		
 		"msg": <Status message>
 	}
 
@@ -104,6 +105,7 @@ The only supported method is GET, but it might change in the future.
 			<etc.>
 		},
 		
-		"status": <"ok" – also when no definitions found|"error">
+		"status": <"ok" – also when no definitions found|"error">,
+		
 		"msg": <Status message>
 	}
