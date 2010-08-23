@@ -8,13 +8,12 @@ It tries hard to be RFC–compliant (http://www.dict.org/rfc2229.txt), though it
 Dict.json is distributed under a MIT-Style License.
 
 ### Currently supported actions ###
-* getting definitions (also many words at a time)
+* getting definitions (many words and databases at a time)
 * providing suggestions if the definition wasn't found
 
 ### Limitations (likely to be fixed soon) ###
-* dict database is chosen at startup
 * lack of support for listing databases and strategies
-* Levenshtein strategy hardcoded for suggestions
+* Levenshtein distance one strategy hardcoded for suggestions
 
 
 ## Usage ##
@@ -23,8 +22,7 @@ You should have node.js installed.
 
 To run dict.json type `node dict.json.js`
 
-The server should be up and listening on 127.0.0.1:8700
-
+The server should be up and listening on 127.0.0.1:8700.
 The program settings are stored in the config variable on the beginning of the dict.json.js file.
 Best result are achieved when dict server is also run on localhost.
 
@@ -37,11 +35,13 @@ The only supported method is GET, but it might change in the future.
 ### Single word requests ###
 
 #### Query string variables ####
-* `action=def` – can be ommited
-* `suggestions=<true|false>`
-* `word=<word>`
-* `type=<adj|adv|v|n>` – Filtering only certain word types from the definition, currently unsupported.
-		
+* `action=def` – optional, specifies the action to perform
+* `word=<word>` – without the `"`, `\r` and `\n` characters, otherwise they will be cut and the returning definition key name will differ.
+* `type=<adj|adv|v|n>` – optional, filtering only certain word types from the definition, currently unsupported.
+* `db[]=<db name>` – optional, databases to use when searching. Can be a string (`db=<db name>`) if only one is specified.
+* `suggestions=<true|default false>` – optional, look for suggestions if no definitions were found.
+* `sug_ignore_db[]=<db name>` – optional, databases which won't be used for suggestions, can be a string if only one specified.
+
 #### Response ####
 	{
 		"definitions": [
@@ -65,13 +65,15 @@ The only supported method is GET, but it might change in the future.
 		"status": <ok - also when no definitions found|error>
 		"msg": <Status message>
 	}
-		
+
 ### Multiple words requests ###
 #### Query string variables ####
 * `action=multi`
-* `words[][word]=<word>`
-* `words[][type]=<type>`
+* `words[0][word]=<word>`, as mentioned above
+* `words[0][type]=<adj|adv|v|n>`
+* `words[0]db[]=<db name>`
 * `suggestions=<true|false>`
+* `sug_ignore_db[]=<db name>`
 		
 #### Response ####
 	{
