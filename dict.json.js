@@ -23,7 +23,7 @@ var logLevel = {
 var config = {
 				  logging : logLevel.diagnostic
 				, server : {
-							  'port' : '8701'
+							  'port' : '8700'
 							, 'host' : '127.0.0.1'
 					}
 				, dictd : {
