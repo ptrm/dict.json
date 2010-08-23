@@ -379,7 +379,8 @@ function getDefs(words, res, options) {
 						
 							log('Suggestion: "' + sug + '"', logLevel.verbose);
 						
-							suggestions[word].push(sug);
+							if ( suggestions[word].indexOf(sug) == -1 )
+								suggestions[word].push(sug);
 						}
 						
 						log('Suggestions ended.', logLevel.verbose);
