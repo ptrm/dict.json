@@ -142,7 +142,7 @@ function getDefs(words, res, options) {
 	dict.on('connect', function () {
 		log('getDefs: connected', logLevel.verbose);
 		
-		//we wait for a full response before requesting another definition
+		// put resuests to queue
 		for (var word in words) {
 			if (word == '_count')
 				continue;
@@ -181,7 +181,7 @@ function getDefs(words, res, options) {
 			}
 			
 			
-			// Send the all ending requests at once. It increases performance when
+			// Send the all pending requests at once. It increases performance when
 			// using remote dict server, and is encouraged by the RFC.
 			req = '';
 			for (i in reqQueue) {
