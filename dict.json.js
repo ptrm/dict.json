@@ -132,7 +132,7 @@ function getDefs(words, res, options) {
 	dict.on('timeout', function () {
 		log('timeout', logLevel.diagnostic);
 		end(res, 'error', 'Timeout');
-		dict.destroy();
+		dict.end();
 	});
 	
 	dict.on('end', function() {
