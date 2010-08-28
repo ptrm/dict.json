@@ -29,7 +29,7 @@ var config = {
 				, dictd : {
 							 'port' : '2628'
 							, 'host' : '127.0.0.1'
-							, 'timeout' : 100
+							, 'timeout' : 700
 					}
 				, db : '!'
 }
