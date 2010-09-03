@@ -22,14 +22,14 @@ You should have [node.js](http://nodejs.org/) installed.
 
 To run dict.json type `node dict.json.js`
 
-The server should be up and listening on 127.0.0.1:8700.
+The server should be up and listening on `127.0.0.1:8700`.
 The settings are stored in the `config` variable on the beginning of the `dict.json.js` file.
-Best results are achieved when dict server is also run on localhost, otherwise you might want to change `config.dictd.timeout` to a larger value.
+Best results are achieved when dict server is also run on localhost, otherwise you might want to change `config.dictd.timeout` to a greater value.
 
 
 ## Data structure ##
 
-Currently there are two possible kinds of requests, for a single word or a list of them.
+Currently there are two possible kinds of requests, for one and for many words.
 The only supported method is GET, but it might change in the future.
 
 ### Single word requests ###
@@ -37,7 +37,7 @@ The only supported method is GET, but it might change in the future.
 #### Query string variables ####
 * `action=def` – optional, specifies the action to perform
 * `word=<word>` – without the `"`, `\r` and `\n` characters, otherwise they will be cut and the returning definition key name will differ.
-* `type=<adj|adv|v|n>` – optional, filtering only certain word types from the definition, currently unsupported.
+* `type=<adj|adv|v|n>` – optional, filtering only specified word type from the definition, currently unsupported.
 * `db[]=<db name>` – optional, databases to use when searching. Can be a string (`db=<db name>`) if only one is specified.
 * `suggestions=<true|default false>` – optional, look for suggestions if no definitions were found.
 * `sug_ignore_db[]=<db name>` – optional, databases which won't be used for suggestions, can be a string if only one specified.
