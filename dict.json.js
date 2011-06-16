@@ -67,7 +67,7 @@ function handleRequest(req, res) {
 		switch ( params.action ) {
 			case '':
 			case 'def':
-				wordList = [ {word: params.word, type: params.type, db: params.db} ];
+				wordList = [ {word: params.word, type: params.type, db: params['db[]'] || params.db} ];
 				action = 'def';
 			break;
 			
